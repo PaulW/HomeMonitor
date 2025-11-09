@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.log
+logs/
+data_*.json
+output.json
+.env
+
+# EvoHome plugin config (contains credentials)
+lib/plugins/evohome/config.json
+
+# Database files (configuration is versioned via migrations, not the DB file)
+data/
+*.db
+*.db-shm
+*.db-wal

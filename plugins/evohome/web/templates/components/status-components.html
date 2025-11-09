@@ -1,0 +1,28 @@
+<!--
+  Status Page Component Templates
+  
+  Reusable HTML templates for the status page.
+-->
+
+<!-- Device Table Row Template -->
+<template id="template-device-row">
+  <tr>
+    <td>
+      <span class="emoji" data-emoji></span>
+      <span data-device-name></span>
+      <span data-override-badge></span>
+    </td>
+    <td data-current-temp></td>
+    <td data-set-temp></td>
+    <td data-status></td>
+  </tr>
+</template>
+
+<!-- Empty Devices Message -->
+<template id="template-no-devices">
+  <tr>
+    <td colspan="4" style="text-align: center; padding: 20px; color: #9ca3af;">
+      No devices found
+    </td>
+  </tr>
+</template>

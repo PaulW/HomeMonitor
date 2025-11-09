@@ -1,0 +1,295 @@
+<div class="container">
+  <div class="home-hero">
+    <div class="hero-icon">🏠</div>
+    <h1>Welcome to Home Monitor</h1>
+    <p class="hero-subtitle">Extensible Home Automation Platform</p>
+  </div>
+
+  <div class="home-content">
+    <div class="info-card">
+      <div class="info-card-icon">📊</div>
+      <h2>System Overview</h2>
+      <p>Your home automation hub is running and ready.</p>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">{{pluginCount}}</div>
+          <div class="stat-label">Active Plugin{{#pluginCountPlural}}s{{/pluginCountPlural}}</div>
+        </div>
+      </div>
+    </div>
+
+    {{#hasPlugins}}
+    <div class="plugins-section">
+      <h2>🔌 Installed Plugins</h2>
+      <div class="plugins-grid">
+        {{#plugins}}
+        <a href="/plugin/{{id}}" class="plugin-card">
+          <div class="plugin-card-header">
+            <span class="plugin-icon">{{icon}}</span>
+            <span class="plugin-name">{{name}}</span>
+          </div>
+          <div class="plugin-version">v{{version}}</div>
+          <p class="plugin-description">{{description}}</p>
+          <div class="plugin-footer">
+            <span class="plugin-status status-active">● Active</span>
+            <span class="plugin-arrow">→</span>
+          </div>
+        </a>
+        {{/plugins}}
+      </div>
+    </div>
+    {{/hasPlugins}}
+
+    {{^hasPlugins}}
+    <div class="info-card">
+      <div class="info-card-icon">⚠️</div>
+      <h2>No Plugins Installed</h2>
+      <p>Add plugins to the <code>plugins/</code> directory to get started.</p>
+    </div>
+    {{/hasPlugins}}
+
+    <div class="quick-links">
+      <h2>🔗 Quick Links</h2>
+      <div class="links-grid">
+        <a href="/logs" class="quick-link">
+          <span class="link-icon">📋</span>
+          <span class="link-text">Activity Logs</span>
+        </a>
+        <a href="https://github.com/yourusername/home-monitor" target="_blank" class="quick-link">
+          <span class="link-icon">📖</span>
+          <span class="link-text">Documentation</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .home-hero {
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 16px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  }
+
+  .hero-icon {
+    font-size: 72px;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .home-hero h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  .hero-subtitle {
+    font-size: 18px;
+    opacity: 0.9;
+    font-weight: 400;
+  }
+
+  .home-content {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  .info-card-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .info-card h2 {
+    font-size: 28px;
+    color: #1f2937;
+    margin-bottom: 12px;
+  }
+
+  .info-card p {
+    color: #6b7280;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .stat-item {
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 8px;
+  }
+
+  .stat-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .plugins-section {
+    margin-bottom: 32px;
+  }
+
+  .plugins-section h2 {
+    font-size: 24px;
+    color: #1f2937;
+    margin-bottom: 20px;
+  }
+
+  .plugins-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .plugin-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .plugin-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  }
+
+  .plugin-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .plugin-icon {
+    font-size: 32px;
+  }
+
+  .plugin-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .plugin-version {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-bottom: 12px;
+  }
+
+  .plugin-description {
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.6;
+    flex: 1;
+    margin-bottom: 16px;
+  }
+
+  .plugin-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #f3f4f6;
+  }
+
+  .plugin-status {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .plugin-status.status-active {
+    color: #10b981;
+  }
+
+  .plugin-arrow {
+    font-size: 18px;
+    color: #667eea;
+  }
+
+  .quick-links {
+    margin-bottom: 32px;
+  }
+
+  .quick-links h2 {
+    font-size: 24px;
+    color: #1f2937;
+    margin-bottom: 20px;
+  }
+
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .quick-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: #1f2937;
+    transition: all 0.2s ease;
+  }
+
+  .quick-link:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+
+  .link-icon {
+    font-size: 24px;
+  }
+
+  .link-text {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  code {
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+  }
+</style>

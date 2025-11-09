@@ -1,0 +1,69 @@
+<!--
+  Scheduler Component Templates
+  
+  Reusable HTML templates for the scheduler page.
+-->
+
+<!-- No Zones Message -->
+<template id="template-no-zones">
+  <div style="text-align: center; padding: 60px 20px; color: #6b7280;">
+    <div style="font-size: 64px; margin-bottom: 20px;">📅</div>
+    <h2 style="color: #1f2937; margin-bottom: 12px;">No Zones Found</h2>
+    <p data-message></p>
+  </div>
+</template>
+
+<!-- Schedule Error Message -->
+<template id="template-schedule-error">
+  <div style="text-align: center; padding: 60px 20px;">
+    <div style="font-size: 64px; margin-bottom: 20px;">⚠️</div>
+    <h2 style="color: #1f2937; margin-bottom: 12px;">Failed to Load Schedules</h2>
+    <p style="color: #6b7280; margin-bottom: 24px;" data-error-message></p>
+    <button onclick="loadSchedules()" style="background: #667eea; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+      🔄 Retry
+    </button>
+  </div>
+</template>
+
+<!-- Switchpoint Template -->
+<template id="template-switchpoint">
+  <div class="switchpoint">
+    <div class="switchpoint-number" data-index></div>
+    <div class="switchpoint-time">
+      <label>Time</label>
+      <input type="time" data-time-input>
+    </div>
+    <div class="switchpoint-temp">
+      <label>Temperature (°C)</label>
+      <input type="number" step="0.5" min="5" max="35" data-temp-input>
+    </div>
+    <div class="switchpoint-actions">
+      <button class="btn-icon btn-delete" data-delete-btn title="Delete">🗑️</button>
+    </div>
+  </div>
+</template>
+
+<!-- Empty Switchpoints Message -->
+<template id="template-no-switchpoints">
+  <p style="color: #6b7280; text-align: center; padding: 20px;">
+    No switchpoints defined for this day.
+  </p>
+</template>
+
+<!-- Add Switchpoint Button Template -->
+<template id="template-add-switchpoint-btn">
+  <button class="add-switchpoint-btn" data-add-switchpoint>➕ Add Switchpoint</button>
+</template>
+
+<!-- Timeline Zone Row Template -->
+<template id="template-timeline-zone-row">
+  <div class="timeline-zone-row">
+    <div class="timeline-zone-name" data-zone-name></div>
+    <div class="timeline-schedule" data-timeline-schedule></div>
+  </div>
+</template>
+
+<!-- Timeline Segment Template -->
+<template id="template-timeline-segment">
+  <div class="timeline-segment" data-segment></div>
+</template>

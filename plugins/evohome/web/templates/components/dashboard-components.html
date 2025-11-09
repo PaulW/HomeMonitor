@@ -1,0 +1,45 @@
+<!--
+  Dashboard Component Templates
+  
+  Reusable HTML templates for the dashboard page.
+  These are loaded on-demand when the dashboard page loads.
+-->
+
+<!-- Room Card Template -->
+<template id="template-room-card">
+  <div class="room-card">
+    <div class="room-card-header">
+      <div class="room-name">
+        <span class="room-status-icon"></span>
+        <span class="room-name-text"></span>
+      </div>
+    </div>
+    
+    <div class="temp-display-container">
+      <div class="current-temp-display">
+        <span class="current-temp-value"></span>
+        <span class="current-temp-decimal"></span>
+        <span class="current-temp-unit">°C</span>
+      </div>
+    </div>
+    
+    <div class="target-temp-display">
+      <span class="target-temp-label">Set to</span>
+      <span class="target-temp-value">
+        <span class="target-temp-number"></span>
+        <span class="target-temp-unit">°C</span>
+      </span>
+    </div>
+    
+    <div class="room-status"></div>
+    
+    <div class="room-actions">
+      <button class="room-action-btn boost-btn">
+        🔥 <span class="boost-label">Boost</span>
+      </button>
+      <button class="room-action-btn" disabled title="Coming soon">
+        📅 Schedule
+      </button>
+    </div>
+  </div>
+</template>

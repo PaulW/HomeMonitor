@@ -1,0 +1,55 @@
+<!--
+  Shared Component Templates
+  
+  Reusable HTML templates used across multiple pages.
+-->
+
+<!-- Config Error Message -->
+<template id="template-config-error">
+  <p style="color: red;">Failed to load configuration</p>
+</template>
+
+<!-- Config Table Row Template -->
+<template id="template-config-row">
+  <tr style="border-bottom: 1px solid #e5e7eb;">
+    <td style="padding: 12px; font-weight: 600;" data-room-name></td>
+    <td style="padding: 12px; text-align: center;">
+      <input type="checkbox" data-allow-override style="width: 20px; height: 20px; cursor: pointer;">
+    </td>
+    <td style="padding: 12px;">
+      <div data-time-windows></div>
+    </td>
+    <td style="padding: 12px; text-align: center;">
+      <button data-add-window style="background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+        + Add
+      </button>
+    </td>
+  </tr>
+</template>
+
+<!-- Time Window Display Template -->
+<template id="template-time-window">
+  <div style="margin-bottom: 8px; padding: 8px; background: #f9fafb; border-radius: 6px; border-left: 3px solid #667eea;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong data-time-range></strong>
+        <div style="margin-top: 4px;" data-day-badges></div>
+      </div>
+      <button data-remove-window style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+        ✕
+      </button>
+    </div>
+  </div>
+</template>
+
+<!-- Day Badge Template -->
+<template id="template-day-badge">
+  <span data-day-badge style="display: inline-block; padding: 2px 6px; margin: 2px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase;"></span>
+</template>
+
+<!-- Loading Message Template -->
+<template id="template-loading">
+  <div style="text-align: center; padding: 40px; color: #9ca3af;">
+    <span data-loading-text>Loading...</span>
+  </div>
+</template>
