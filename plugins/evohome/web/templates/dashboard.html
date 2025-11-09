@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="header">
+    <h1>🌡️ EvoHome Dashboard</h1>
+    <div class="status-bar">
+      <div id="status-badge" class="status-badge status-online">● Online</div>
+      <div id="last-update" style="color: #6b7280; font-size: 14px;"></div>
+    </div>
+  </div>
+
+  <div id="status-message" class="status-message" style="display: none;"></div>
+
+  <div id="rooms-grid" class="rooms-grid">
+    <div id="loading-message" style="text-align: center; padding: 40px; color: #9ca3af; grid-column: 1/-1;">
+      Loading rooms...
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="/plugins/evohome/css/evohome.css">
+<script src="/plugins/evohome/js/evohome-utils.js"></script>
+<script src="/plugins/evohome/js/evohome-template-helpers.js"></script>
+<script src="/plugins/evohome/js/evohome-dashboard-display.js"></script>

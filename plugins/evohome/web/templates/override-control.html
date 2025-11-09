@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="header">
+    <h1>🏠 EvoHome Monitor</h1>
+    <div class="status-bar">
+      <div id="status-badge" class="status-badge status-online">● Online</div>
+      <div id="next-run" style="color: #6b7280; font-size: 14px;"></div>
+    </div>
+    <div class="actions">
+      <button onclick="saveConfig()">💾 Save Configuration</button>
+    </div>
+  </div>
+
+  <div class="config-panel">
+    <h2>⚙️ Configure Override Rules</h2>
+    <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px; margin-bottom: 16px; border-radius: 4px;">
+      <p style="margin: 0 0 8px 0; font-weight: 600; color: #1e40af;">📘 How Override Blocking Works:</p>
+      <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #1e40af;">
+        <li><strong>Unchecked</strong> (default): Overrides are ALWAYS ALLOWED - time windows ignored</li>
+        <li><strong>Checked</strong>: Overrides are ALLOWED except during blocked time windows</li>
+        <li><strong>Blocked Windows</strong>: Define specific times when overrides are NOT ALLOWED</li>
+      </ul>
+      <p style="margin: 8px 0 0 0; font-size: 13px; color: #3b82f6;">
+        💡 <em>Example: Check "Block Overrides" and add 09:00-17:00 weekdays to block during work hours but allow evenings/weekends.</em>
+      </p>
+    </div>
+    <div id="config-container">Loading...</div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="/plugins/evohome/css/evohome.css">
+<script src="/plugins/evohome/js/evohome-utils.js"></script>
+<script src="/plugins/evohome/js/evohome-template-helpers.js"></script>
+<script src="/plugins/evohome/js/evohome-override-control.js"></script>

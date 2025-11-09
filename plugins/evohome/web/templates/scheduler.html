@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="header">
+    <h1>📅 EvoHome Scheduler</h1>
+    <div id="status-message" class="status-message"></div>
+    
+    <!-- Day Selector -->
+    <div class="day-selector">
+      <label>Day:</label>
+      <select id="selected-day" onchange="updateTimelineDay()">
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+        <option value="Sunday">Sunday</option>
+      </select>
+    </div>
+    
+    <div class="actions">
+      <button onclick="saveAllSchedules()" class="btn-primary">💾 Save All Changes</button>
+    </div>
+  </div>
+
+  <!-- Timeline View -->
+  <div id="timeline-container" class="timeline-container">
+    <div class="timeline-header">
+      <div class="timeline-zone-label">Zones</div>
+      <div class="timeline-hours">
+        <div class="hour-marker" data-hour="0">00:00</div>
+        <div class="hour-marker" data-hour="3">03:00</div>
+        <div class="hour-marker" data-hour="6">06:00</div>
+        <div class="hour-marker" data-hour="9">09:00</div>
+        <div class="hour-marker" data-hour="12">12:00</div>
+        <div class="hour-marker" data-hour="15">15:00</div>
+        <div class="hour-marker" data-hour="18">18:00</div>
+        <div class="hour-marker" data-hour="21">21:00</div>
+        <div class="hour-marker" data-hour="24">24:00</div>
+      </div>
+    </div>
+    <div id="timeline-zones">
+      <div style="text-align: center; padding: 40px; color: #9ca3af;">
+        Loading schedules...
+      </div>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="/plugins/evohome/css/evohome.css">
+<script src="/plugins/evohome/js/evohome-utils.js"></script>
+<script src="/plugins/evohome/js/evohome-template-helpers.js"></script>
+<script src="/plugins/evohome/js/evohome-scheduler.js"></script>

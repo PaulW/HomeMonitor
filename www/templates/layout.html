@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - Home Monitor</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <a href="/" class="sidebar-header">
+      <h1>🏠 Home Monitor</h1>
+      <p>Extensible Home Automation Platform</p>
+    </a>
+    <div class="sidebar-nav">
+      {{#plugins}}
+      <div class="nav-section">
+        <div class="nav-section-title" onclick="toggleSection(this)">
+          <span class="section-toggle">▶</span>
+          <span>{{name}}</span>
+        </div>
+        <div class="nav-section-items collapsed">
+          {{#menuItems}}
+          <a href="{{path}}" class="nav-item" data-path="{{path}}">
+            {{#icon}}<span class="nav-item-icon">{{icon}}</span>{{/icon}}
+            <span>{{label}}</span>
+          </a>
+          {{/menuItems}}
+        </div>
+      </div>
+      {{/plugins}}
+    </div>
+  </nav>
+
+  <!-- Core Scripts - Load BEFORE content so plugin scripts can use them -->
+  <script src="/js/utils.js"></script>
+  <script src="/js/template-helpers.js"></script>
+  <script src="/js/dom-differ.js"></script>
+  <script src="/js/scripts.js"></script>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    {{{content}}}
+  </main>
+
+  <script>
+    // Highlight active nav item and auto-expand its section
+    const currentPath = window.location.pathname;
+    let activeSection = null;
+    
+    document.querySelectorAll('.nav-item').forEach(item => {
+      if (item.getAttribute('data-path') === currentPath) {
+        item.classList.add('active');
+        // Find the section containing this active item
+        activeSection = item.closest('.nav-section');
+      }
+    });
+
+    // Restore section states from localStorage
+    document.querySelectorAll('.nav-section').forEach(section => {
+      const sectionName = section.querySelector('.nav-section-title span:last-child').textContent;
+      const items = section.querySelector('.nav-section-items');
+      const toggle = section.querySelector('.section-toggle');
+      
+      // If this section contains the active page, always expand it
+      if (section === activeSection) {
+        items.classList.remove('collapsed');
+        toggle.textContent = '▼';
+        localStorage.setItem(`section-${sectionName}`, 'expanded');
+      } else {
+        // Otherwise restore from localStorage
+        const isCollapsed = localStorage.getItem(`section-${sectionName}`) === 'collapsed';
+        
+        if (!isCollapsed) {
+          items.classList.remove('collapsed');
+          toggle.textContent = '▼';
+        }
+      }
+    });
+
+    // Toggle section collapse/expand
+    function toggleSection(element) {
+      const items = element.nextElementSibling;
+      const toggle = element.querySelector('.section-toggle');
+      const sectionName = element.querySelector('span:last-child').textContent;
+      
+      if (items.classList.contains('collapsed')) {
+        items.classList.remove('collapsed');
+        toggle.textContent = '▼';
+        localStorage.setItem(`section-${sectionName}`, 'expanded');
+      } else {
+        items.classList.add('collapsed');
+        toggle.textContent = '▶';
+        localStorage.setItem(`section-${sectionName}`, 'collapsed');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<div class="container">
+  <div class="header">
+    <h1>📡 System Status</h1>
+    <p class="subtitle">Monitor polling timers and API health</p>
+  </div>
+
+  <div class="status-container">
+    <div class="status-card">
+      <h2>⏱️ Polling Timers</h2>
+      <div class="table-wrapper">
+        <table id="polling-table">
+          <thead>
+            <tr>
+              <th>Operation</th>
+              <th>Interval</th>
+              <th>Total Runs</th>
+              <th>Last Poll</th>
+              <th>Next Poll</th>
+              <th>Countdown</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="row-zoneStatus">
+              <td class="operation-name">🌡️ Zone Status</td>
+              <td class="interval">-</td>
+              <td class="total-runs">-</td>
+              <td class="last-poll">-</td>
+              <td class="next-poll">-</td>
+              <td class="countdown">-</td>
+              <td class="status"><span class="status-badge pending">Pending</span></td>
+            </tr>
+            <tr id="row-overrideReset">
+              <td class="operation-name">🔄 Override Reset</td>
+              <td class="interval">-</td>
+              <td class="total-runs">-</td>
+              <td class="last-poll">-</td>
+              <td class="next-poll">-</td>
+              <td class="countdown">-</td>
+              <td class="status"><span class="status-badge pending">Pending</span></td>
+            </tr>
+            <tr id="row-scheduleRefresh">
+              <td class="operation-name">📅 Schedule Refresh</td>
+              <td class="interval">-</td>
+              <td class="total-runs">-</td>
+              <td class="last-poll">-</td>
+              <td class="next-poll">-</td>
+              <td class="countdown">-</td>
+              <td class="status"><span class="status-badge pending">Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="status-card">
+      <h2>� API Statistics</h2>
+      
+      <h3 style="margin-top: 0;">V2 API (Zones & Overrides)</h3>
+      <div class="stats-grid-compact">
+        <div class="stat-box-compact">
+          <div class="stat-label">Authentication</div>
+          <div class="stat-row">
+            <span class="stat-count success" id="v2-auth-success">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count fail" id="v2-auth-failed">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count total" id="v2-auth-total">-</span>
+          </div>
+          <div class="stat-sublabel">Success / Failed / Total</div>
+          <div class="stat-timestamp" id="v2-auth-last">Last: -</div>
+        </div>
+        <div class="stat-box-compact">
+          <div class="stat-label">GET Requests</div>
+          <div class="stat-row">
+            <span class="stat-count success" id="v2-get-success">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count fail" id="v2-get-failed">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count total" id="v2-get-total">-</span>
+          </div>
+          <div class="stat-sublabel">Success / Failed / Total</div>
+          <div class="stat-timestamp" id="v2-get-last">Last: -</div>
+        </div>
+        <div class="stat-box-compact">
+          <div class="stat-label">PUT Requests</div>
+          <div class="stat-row">
+            <span class="stat-count success" id="v2-put-success">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count fail" id="v2-put-failed">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count total" id="v2-put-total">-</span>
+          </div>
+          <div class="stat-sublabel">Success / Failed / Total</div>
+          <div class="stat-timestamp" id="v2-put-last">Last: -</div>
+        </div>
+      </div>
+
+      <h3>V1 API (DHW Control & Schedules)</h3>
+      <div class="stats-grid-compact">
+        <div class="stat-box-compact">
+          <div class="stat-label">Authentication</div>
+          <div class="stat-row">
+            <span class="stat-count success" id="v1-auth-success">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count fail" id="v1-auth-failed">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count total" id="v1-auth-total">-</span>
+          </div>
+          <div class="stat-sublabel">Success / Failed / Total</div>
+          <div class="stat-timestamp" id="v1-auth-last">Last: -</div>
+        </div>
+        <div class="stat-box-compact">
+          <div class="stat-label">GET Requests</div>
+          <div class="stat-row">
+            <span class="stat-count success" id="v1-get-success">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count fail" id="v1-get-failed">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count total" id="v1-get-total">-</span>
+          </div>
+          <div class="stat-sublabel">Success / Failed / Total</div>
+          <div class="stat-timestamp" id="v1-get-last">Last: -</div>
+        </div>
+        <div class="stat-box-compact">
+          <div class="stat-label">PUT Requests</div>
+          <div class="stat-row">
+            <span class="stat-count success" id="v1-put-success">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count fail" id="v1-put-failed">-</span>
+            <span class="stat-separator">/</span>
+            <span class="stat-count total" id="v1-put-total">-</span>
+          </div>
+          <div class="stat-sublabel">Success / Failed / Total</div>
+          <div class="stat-timestamp" id="v1-put-last">Last: -</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>ℹ️ About Polling</h3>
+      <p>All polling operations are synchronized to run at aligned times based on their intervals:</p>
+      <ul>
+        <li><strong>Zone Status:</strong> Fetches current temperatures and zone status. Runs every 1-5 minutes (configurable).</li>
+        <li><strong>Override Reset:</strong> Checks and resets manual overrides based on rules. Runs every 5-15 minutes (configurable).</li>
+        <li><strong>Schedule Refresh:</strong> Updates schedule data from the API. Runs every 30-60 minutes (configurable).</li>
+      </ul>
+      <p class="note">💡 Operations are queued with 2-second delays between API calls to prevent rate limiting.</p>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="/plugins/evohome/css/evohome.css">
+<script src="/plugins/evohome/js/evohome-utils.js"></script>
+<script src="/plugins/evohome/js/evohome-status.js"></script>
