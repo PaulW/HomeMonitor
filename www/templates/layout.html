@@ -7,6 +7,16 @@
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+  <!-- Mobile Menu Toggle -->
+  <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Sidebar Overlay for Mobile -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
   <!-- Sidebar -->
   <nav class="sidebar" id="sidebar">
     <a href="/" class="sidebar-header">
@@ -37,64 +47,12 @@
   <script src="/js/utils.js"></script>
   <script src="/js/template-helpers.js"></script>
   <script src="/js/dom-differ.js"></script>
-  <script src="/js/scripts.js"></script>
+  <script src="/js/sidebar-nav.js"></script>
+  <script src="/js/mobile-nav.js"></script>
 
   <!-- Main Content -->
   <main class="main-content">
     {{{content}}}
   </main>
-
-  <script>
-    // Highlight active nav item and auto-expand its section
-    const currentPath = window.location.pathname;
-    let activeSection = null;
-    
-    document.querySelectorAll('.nav-item').forEach(item => {
-      if (item.getAttribute('data-path') === currentPath) {
-        item.classList.add('active');
-        // Find the section containing this active item
-        activeSection = item.closest('.nav-section');
-      }
-    });
-
-    // Restore section states from localStorage
-    document.querySelectorAll('.nav-section').forEach(section => {
-      const sectionName = section.querySelector('.nav-section-title span:last-child').textContent;
-      const items = section.querySelector('.nav-section-items');
-      const toggle = section.querySelector('.section-toggle');
-      
-      // If this section contains the active page, always expand it
-      if (section === activeSection) {
-        items.classList.remove('collapsed');
-        toggle.textContent = '▼';
-        localStorage.setItem(`section-${sectionName}`, 'expanded');
-      } else {
-        // Otherwise restore from localStorage
-        const isCollapsed = localStorage.getItem(`section-${sectionName}`) === 'collapsed';
-        
-        if (!isCollapsed) {
-          items.classList.remove('collapsed');
-          toggle.textContent = '▼';
-        }
-      }
-    });
-
-    // Toggle section collapse/expand
-    function toggleSection(element) {
-      const items = element.nextElementSibling;
-      const toggle = element.querySelector('.section-toggle');
-      const sectionName = element.querySelector('span:last-child').textContent;
-      
-      if (items.classList.contains('collapsed')) {
-        items.classList.remove('collapsed');
-        toggle.textContent = '▼';
-        localStorage.setItem(`section-${sectionName}`, 'expanded');
-      } else {
-        items.classList.add('collapsed');
-        toggle.textContent = '▶';
-        localStorage.setItem(`section-${sectionName}`, 'collapsed');
-      }
-    }
-  </script>
 </body>
 </html>
