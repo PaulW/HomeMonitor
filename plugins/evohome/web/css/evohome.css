@@ -1240,3 +1240,386 @@
     opacity: 0;
   }
 }
+
+/* ============================================================================
+   Mobile Responsive Styles
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+  .rooms-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .zones-container {
+    gap: 16px;
+  }
+
+  .zone-card {
+    padding: 20px;
+  }
+
+  /* Timeline adjustments */
+  .timeline-hours {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .hour-marker:nth-child(n+7) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Dashboard - Room Cards */
+  .rooms-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .room-card {
+    padding: 16px;
+  }
+
+  .current-temp-value {
+    font-size: 48px;
+  }
+
+  .current-temp-decimal {
+    font-size: 28px;
+  }
+
+  .current-temp-unit {
+    font-size: 20px;
+  }
+
+  .target-temp-value {
+    font-size: 16px;
+  }
+
+  .room-actions {
+    flex-direction: column;
+  }
+
+  .room-action-btn {
+    width: 100%;
+  }
+
+  /* Scheduler */
+  .zone-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .days-tabs {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .day-tab {
+    padding: 8px 16px;
+    font-size: 13px;
+    flex: 1;
+    text-align: center;
+  }
+
+  .switchpoint {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .switchpoint-time,
+  .switchpoint-temp {
+    flex: 1 1 calc(50% - 20px);
+    min-width: 120px;
+  }
+
+  .switchpoint-actions {
+    flex: 1 1 100%;
+    margin-left: 0;
+    justify-content: center;
+  }
+
+  /* Timeline View */
+  .timeline-container {
+    padding: 16px;
+    overflow-x: auto;
+  }
+
+  .timeline-zone-row {
+    grid-template-columns: 140px 1fr;
+    min-height: 50px;
+  }
+
+  .timeline-zone-name {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .timeline-schedule {
+    height: 50px;
+  }
+
+  .timeline-hours {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .hour-marker {
+    padding: 12px 4px;
+    font-size: 11px;
+  }
+
+  .timeline-segment {
+    font-size: 10px;
+  }
+
+  /* Settings */
+  .settings-container {
+    padding: 0;
+  }
+
+  .settings-section {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  /* Status Page */
+  .status-container {
+    gap: 16px;
+  }
+
+  .status-card {
+    padding: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stats-grid-compact {
+    grid-template-columns: 1fr;
+  }
+
+  .timestamp-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .timestamp-item {
+    min-width: auto;
+  }
+
+  /* Config Table */
+  .config-panel {
+    padding: 20px;
+    overflow-x: auto;
+  }
+
+  .config-table {
+    min-width: 600px;
+  }
+
+  /* Day selector */
+  .day-selector {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .day-selector select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Very small screens */
+  .room-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .current-temp-value {
+    font-size: 40px;
+  }
+
+  .current-temp-decimal {
+    font-size: 24px;
+  }
+
+  .target-temp-display {
+    font-size: 12px;
+  }
+
+  .target-temp-value {
+    font-size: 14px;
+  }
+
+  .room-status {
+    font-size: 11px;
+  }
+
+  /* Scheduler - compress further */
+  .zone-card {
+    padding: 16px;
+  }
+
+  .zone-name {
+    font-size: 18px;
+  }
+
+  .day-tab {
+    padding: 6px 8px;
+    font-size: 12px;
+    flex: 0 0 auto;
+  }
+
+  .switchpoint {
+    padding: 12px;
+  }
+
+  .switchpoint-number {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .switchpoint-time,
+  .switchpoint-temp {
+    flex: 1 1 100%;
+  }
+
+  .btn-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  /* Timeline - horizontal scroll */
+  .timeline-zone-row {
+    grid-template-columns: 100px 1fr;
+  }
+
+  .timeline-zone-name {
+    font-size: 11px;
+    padding: 8px;
+  }
+
+  .timeline-header {
+    grid-template-columns: 100px 1fr;
+  }
+
+  .timeline-hours {
+    grid-template-columns: repeat(4, 1fr);
+    min-width: 400px;
+  }
+
+  .hour-marker:nth-child(n+5) {
+    display: none;
+  }
+
+  .timeline-schedule {
+    min-width: 400px;
+  }
+
+  /* Settings - smaller inputs */
+  .form-group input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .toggle-password {
+    top: 36px;
+  }
+
+  /* Status page - stack everything */
+  .stat-box-compact {
+    padding: 12px;
+  }
+
+  .stat-count {
+    font-size: 24px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+}
+
+/* ============================================================================
+   Landscape orientation on mobile
+   ============================================================================ */
+
+@media (max-width: 896px) and (orientation: landscape) {
+  /* Optimize for landscape mobile/tablet */
+  .rooms-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  .timeline-hours {
+    grid-template-columns: repeat(9, 1fr);
+  }
+
+  .hour-marker {
+    display: block;
+  }
+
+  .timeline-schedule {
+    min-width: auto;
+  }
+}
+
+/* ============================================================================
+   Touch-friendly improvements for EvoHome
+   ============================================================================ */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Increase touch targets */
+  .room-action-btn,
+  .day-tab,
+  .btn-icon {
+    min-height: 44px;
+  }
+
+  .switchpoint-time input,
+  .switchpoint-temp input {
+    min-height: 44px;
+  }
+
+  .timeline-segment {
+    min-height: 44px;
+  }
+
+  /* Remove hover effects, use active states instead */
+  .room-card:hover {
+    transform: none;
+  }
+
+  .room-card:active {
+    transform: scale(0.98);
+  }
+
+  .day-tab:hover {
+    border-color: #e5e7eb;
+    color: #6b7280;
+  }
+
+  .btn-primary:hover,
+  .btn-secondary:hover {
+    transform: none;
+  }
+
+  .btn-primary:active,
+  .btn-secondary:active {
+    transform: scale(0.98);
+  }
+}
+
