@@ -205,6 +205,8 @@ class DOMDiffer {
    * @private
    */
   defaultShouldUpdate(item, prevItem) {
+    // Defensive checks for null/undefined items
+    if (!item) return false;
     if (!prevItem) return true;
     
     // Shallow comparison of properties

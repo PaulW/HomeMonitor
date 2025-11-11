@@ -130,6 +130,12 @@ function renderSourceFilters() {
 function displayLogs(logs) {
   const content = document.getElementById('logs-content');
   
+  // Defensive check: ensure content element exists
+  if (!content) {
+    console.error('Log content element not found');
+    return;
+  }
+  
   if (!logs || logs === 'No logs available') {
     content.innerHTML = '<span style="color: #9ca3af;">No logs available yet. Logs will appear after the first check runs.</span>';
     return;
@@ -194,7 +200,9 @@ function displayLogs(logs) {
   content.innerHTML = formattedLogs || '<span style="color: #9ca3af;">No logs match the current filters</span>';
   
   // Auto-scroll to bottom to show most recent logs
-  content.parentElement.scrollTop = content.parentElement.scrollHeight;
+  if (content.parentElement) {
+    content.parentElement.scrollTop = content.parentElement.scrollHeight;
+  }
 }
 
 /**
