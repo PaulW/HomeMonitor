@@ -35,6 +35,12 @@ function generateForm() {
   if (!configSchema) return;
   
   const form = document.getElementById('settings-form');
+  
+  if (!form) {
+    console.error('Settings form element not found');
+    return;
+  }
+  
   form.innerHTML = ''; // Clear existing content
   
   // Generate Credentials section

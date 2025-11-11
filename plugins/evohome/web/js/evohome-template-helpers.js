@@ -76,24 +76,37 @@ function createDeviceRow(device) {
     emoji = '🟡';
   }
   
+  // Defensive checks: ensure all required elements exist
+  const emojiEl = row.querySelector('[data-emoji]');
+  const nameEl = row.querySelector('[data-device-name]');
+  const overrideBadgeEl = row.querySelector('[data-override-badge]');
+  const currentTempEl = row.querySelector('[data-current-temp]');
+  const setTempEl = row.querySelector('[data-set-temp]');
+  const statusEl = row.querySelector('[data-status]');
+  
+  if (!emojiEl || !nameEl || !currentTempEl || !setTempEl || !statusEl) {
+    console.error('Device row template is missing required elements');
+    return row;
+  }
+  
   // Set values
-  row.querySelector('[data-emoji]').textContent = emoji;
-  row.querySelector('[data-device-name]').textContent = device.name;
+  emojiEl.textContent = emoji;
+  nameEl.textContent = device.name;
   
   // Add padlock icon if override blocking is active (not allowed) and not DHW
-  if (device.isOverrideAllowed === false && !device.isFailed && device.name !== 'Domestic Hot Water') {
+  if (device.isOverrideAllowed === false && !device.isFailed && device.name !== 'Domestic Hot Water' && overrideBadgeEl) {
     const padlock = document.createElement('span');
     padlock.textContent = '🔒';
     padlock.title = 'Override blocking is active for this zone';
     padlock.style.cssText = 'margin-left: 6px; font-size: 14px;';
-    row.querySelector('[data-override-badge]').appendChild(padlock);
+    overrideBadgeEl.appendChild(padlock);
   }
   
-  row.querySelector('[data-current-temp]').textContent = 
+  currentTempEl.textContent = 
     device.curTemp !== null ? device.curTemp + '°C' : 'SENSOR FAILED';
-  row.querySelector('[data-set-temp]').textContent = 
+  setTempEl.textContent = 
     device.setTemp !== null ? device.setTemp + '°C' : 'N/A';
-  row.querySelector('[data-status]').textContent = device.status;
+  statusEl.textContent = device.status;
   
   return row;
 }
@@ -107,6 +120,11 @@ function createDeviceRow(device) {
 function createDayBadge(day, isSelected) {
   const badge = getTemplate('template-day-badge');
   const span = badge.querySelector('[data-day-badge]');
+  
+  if (!span) {
+    console.error('Day badge template is missing [data-day-badge] element');
+    return badge;
+  }
   
   span.textContent = day;
   span.style.background = isSelected ? '#667eea' : '#e5e7eb';
@@ -124,10 +142,18 @@ function createDayBadge(day, isSelected) {
 function createTimeWindow(window, onRemove) {
   const element = getTemplate('template-time-window');
   
-  element.querySelector('[data-time-range]').textContent = `${window.start} - ${window.end}`;
+  const timeRangeEl = element.querySelector('[data-time-range]');
+  const dayBadgesContainer = element.querySelector('[data-day-badges]');
+  const removeBtn = element.querySelector('[data-remove-window]');
+  
+  if (!timeRangeEl || !dayBadgesContainer || !removeBtn) {
+    console.error('Time window template is missing required elements');
+    return element;
+  }
+  
+  timeRangeEl.textContent = `${window.start} - ${window.end}`;
   
   // Add day badges
-  const dayBadgesContainer = element.querySelector('[data-day-badges]');
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const daysFull = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
   
@@ -138,7 +164,6 @@ function createTimeWindow(window, onRemove) {
   });
   
   // Set up remove button
-  const removeBtn = element.querySelector('[data-remove-window]');
   removeBtn.onclick = onRemove;
   
   return element;
@@ -155,13 +180,21 @@ function createTimeWindow(window, onRemove) {
 function createConfigRow(rule, ruleIdx, onToggle, onAdd) {
   const row = getTemplate('template-config-row');
   
-  row.querySelector('[data-room-name]').textContent = rule.roomName;
-  
+  const roomNameEl = row.querySelector('[data-room-name]');
   const checkbox = row.querySelector('[data-allow-override]');
+  const windowsContainer = row.querySelector('[data-time-windows]');
+  const addBtn = row.querySelector('[data-add-window]');
+  
+  if (!roomNameEl || !checkbox || !windowsContainer || !addBtn) {
+    console.error('Config row template is missing required elements');
+    return row;
+  }
+  
+  roomNameEl.textContent = rule.roomName;
+  
   checkbox.checked = rule.allowOverride;
   checkbox.onchange = (e) => onToggle(ruleIdx, e.target.checked);
   
-  const windowsContainer = row.querySelector('[data-time-windows]');
   if (rule.timeWindows.length === 0) {
     windowsContainer.innerHTML = '<span style="color: #9ca3af;">No time windows</span>';
   } else {
@@ -175,7 +208,6 @@ function createConfigRow(rule, ruleIdx, onToggle, onAdd) {
     });
   }
   
-  const addBtn = row.querySelector('[data-add-window]');
   addBtn.onclick = () => onAdd(ruleIdx);
   
   return row;
@@ -194,17 +226,24 @@ function createConfigRow(rule, ruleIdx, onToggle, onAdd) {
 function createSwitchpoint(switchpoint, index, zoneId, day, onChange, onDelete) {
   const element = getTemplate('template-switchpoint');
   
-  element.querySelector('[data-index]').textContent = index + 1;
-  
+  const indexEl = element.querySelector('[data-index]');
   const timeInput = element.querySelector('[data-time-input]');
+  const tempInput = element.querySelector('[data-temp-input]');
+  const deleteBtn = element.querySelector('[data-delete-btn]');
+  
+  if (!indexEl || !timeInput || !tempInput || !deleteBtn) {
+    console.error('Switchpoint template is missing required elements');
+    return element;
+  }
+  
+  indexEl.textContent = index + 1;
+  
   timeInput.value = switchpoint.time;
   timeInput.onchange = (e) => onChange(zoneId, day, index, 'time', e.target.value);
   
-  const tempInput = element.querySelector('[data-temp-input]');
   tempInput.value = switchpoint.temperature;
   tempInput.onchange = (e) => onChange(zoneId, day, index, 'temperature', e.target.value);
   
-  const deleteBtn = element.querySelector('[data-delete-btn]');
   deleteBtn.onclick = () => onDelete(zoneId, day, index);
   
   return element;
@@ -220,6 +259,11 @@ function createSwitchpoint(switchpoint, index, zoneId, day, onChange, onDelete) 
 function createTimelineSegment(segment, isDHW, onClick) {
   const element = getTemplate('template-timeline-segment');
   const div = element.querySelector('[data-segment]');
+  
+  if (!div) {
+    console.error('Timeline segment template is missing [data-segment] element');
+    return element;
+  }
   
   const left = (segment.start / 24) * 100;
   const width = ((segment.end - segment.start) / 24) * 100;
@@ -259,10 +303,16 @@ function createTimelineZoneRow(zone, segments, isDHW) {
   const row = getTemplate('template-timeline-zone-row');
   
   const nameEl = row.querySelector('[data-zone-name]');
+  const scheduleEl = row.querySelector('[data-timeline-schedule]');
+  
+  if (!nameEl || !scheduleEl) {
+    console.error('Timeline zone row template is missing required elements');
+    return row;
+  }
+  
   nameEl.textContent = `${isDHW ? '💧' : '🌡️'} ${zone.name}`;
   if (isDHW) nameEl.classList.add('dhw');
   
-  const scheduleEl = row.querySelector('[data-timeline-schedule]');
   segments.forEach(segment => {
     scheduleEl.appendChild(createTimelineSegment(segment, isDHW));
   });
