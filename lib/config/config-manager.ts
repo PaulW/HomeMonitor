@@ -12,6 +12,7 @@
 import path from 'path';
 import { BaseAdapter } from './adapters/base-adapter.js';
 import { SQLiteAdapter } from './adapters/sqlite-adapter.js';
+import { MemoryAdapter } from './adapters/memory-adapter.js';
 import { getEncryptionService, EncryptionService } from './encryption.js';
 import type {
   DatabaseConfig,
@@ -33,6 +34,12 @@ export interface ConfigManagerOptions {
   enableCache?: boolean;
   /** Data directory path */
   dataDir?: string;
+  /** Enable mock mode (in-memory storage, no persistence) */
+  mockMode?: boolean;
+  /** Initial mock data for plugins (pluginName -> config object) */
+  mockData?: Record<string, any>;
+  /** Enable verbose logging for mock mode */
+  verbose?: boolean;
 }
 
 /**
@@ -52,20 +59,33 @@ export class ConfigManager {
       encryptionKey,
       enableCache = true,
       dataDir = './data',
+      mockMode = false,
+      mockData,
+      verbose = false,
     } = options;
 
     this.enableCache = enableCache;
 
-    // Initialize database adapter
-    const dbConfig: DatabaseConfig = database || {
-      type: 'sqlite',
-      path: path.join(dataDir, 'home-monitor.db'),
-    };
-
-    if (dbConfig.type === 'sqlite') {
-      this.adapter = new SQLiteAdapter(dbConfig);
+    // Choose adapter based on mode
+    if (mockMode) {
+      // Mock mode: Use in-memory storage
+      console.log('🎭 ConfigManager: Mock mode enabled (in-memory storage, no database)');
+      this.adapter = new MemoryAdapter({
+        mockData,
+        verbose,
+      });
     } else {
-      throw new Error(`Unsupported database type: ${dbConfig.type}`);
+      // Production mode: Use SQLite database
+      const dbConfig: DatabaseConfig = database || {
+        type: 'sqlite',
+        path: path.join(dataDir, 'home-monitor.db'),
+      };
+
+      if (dbConfig.type === 'sqlite') {
+        this.adapter = new SQLiteAdapter(dbConfig);
+      } else {
+        throw new Error(`Unsupported database type: ${dbConfig.type}`);
+      }
     }
 
     // Initialize encryption service

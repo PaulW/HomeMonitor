@@ -10,6 +10,8 @@
 import { AuthManager } from '../api/auth-manager.js';
 import { V1ApiClient } from '../api/v1-api.js';
 import { V2ApiClient } from '../api/v2-api.js';
+import { MockV1ApiClient } from '../api/mock-v1-api-client.js';
+import { MockV2ApiClient } from '../api/mock-api-client.js';
 import { ZoneService } from '../services/zone-service.js';
 import { OverrideService } from '../services/override-service.js';
 import { ScheduleService } from '../services/schedule-service.js';
@@ -17,6 +19,7 @@ import { TaskScheduler } from '../../../lib/task-scheduler.js';
 import { StatsTracker } from '../../../lib/stats-tracker.js';
 import { ApiStatsTracker } from '../services/api-stats-tracker.js';
 import { DeviceCacheService } from '../services/device-cache-service.js';
+import { writeLog } from './logger.js';
 import type { Config } from '../types/config.types.js';
 
 /**
@@ -24,8 +27,8 @@ import type { Config } from '../types/config.types.js';
  */
 export interface ServiceContainer {
   authManager: AuthManager;
-  v1Api: V1ApiClient;
-  v2Api: V2ApiClient;
+  v1Api: V1ApiClient | MockV1ApiClient;
+  v2Api: V2ApiClient | MockV2ApiClient;
   zoneService: ZoneService;
   overrideService: OverrideService;
   scheduleService: ScheduleService;
@@ -57,16 +60,30 @@ export class ServiceInitializer {
    * this.zoneService = services.zoneService;
    */
   static createServices(getConfig: () => Config): ServiceContainer {
+    const config = getConfig();
+    const isMockMode = config.settings?.mockMode === true;
+    
+    if (isMockMode) {
+      writeLog('🎭 Mock Mode Enabled - Using simulated data for local testing', 'INFO');
+    }
+    
     // 1. Initialize infrastructure services first (needed by AuthManager)
     const apiStatsTracker = new ApiStatsTracker();
     const deviceCache = new DeviceCacheService();
     
-    // 2. Initialize AuthManager with stats tracker
+    // 2. Initialize AuthManager with stats tracker (not used in mock mode)
     const authManager = new AuthManager(apiStatsTracker);
     
     // 3. Initialize API clients with config getter function
-    const v1Api = new V1ApiClient(authManager, getConfig, apiStatsTracker);
-    const v2Api = new V2ApiClient(authManager, getConfig, apiStatsTracker, v1Api);
+    // Use mock API clients if mock mode is enabled
+    // Mock clients need access to deviceCache to look up zone names
+    const v1Api = isMockMode 
+      ? new MockV1ApiClient(deviceCache) as any
+      : new V1ApiClient(authManager, getConfig, apiStatsTracker);
+    
+    const v2Api = isMockMode 
+      ? new MockV2ApiClient() as any
+      : new V2ApiClient(authManager, getConfig, apiStatsTracker, v1Api);
     
     // 4. Initialize business logic services with empty config (will be loaded in init())
     const emptyConfig = {} as Config;

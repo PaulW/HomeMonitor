@@ -28,7 +28,7 @@ const LOGS_DIR = join(__dirname, '../logs');
 export type LogLevel = 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR';
 
 /** Source identifier for log entries (server or plugin name) */
-export type LogSource = 'server' | 'evohome' | string;
+export type LogSource = 'server' | string;
 
 /**
  * Writes a log entry to both the daily log file and console
@@ -50,9 +50,9 @@ export type LogSource = 'server' | 'evohome' | string;
  * @example
  * ```typescript
  * await writeLog('Server starting...', 'server', 'INFO');
- * await writeLog('GET /api/data', 'evohome', 'DEBUG');
- * await writeLog('Rate limit approaching', 'evohome', 'WARNING');
- * await writeLog('Connection failed', 'evohome', 'ERROR');
+ * await writeLog('GET /api/data', 'myplugin', 'DEBUG');
+ * await writeLog('Rate limit approaching', 'myplugin', 'WARNING');
+ * await writeLog('Connection failed', 'myplugin', 'ERROR');
  * ```
  */
 export async function writeLog(

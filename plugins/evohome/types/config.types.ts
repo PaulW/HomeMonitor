@@ -42,6 +42,8 @@ export interface Config {
     dhwSetTemp: number;
     /** Boost temperature increase in °C (0.5-3.0, default 1.5) */
     boostTemp: number;
+    /** Enable mock data mode for local testing (optional) */
+    mockMode?: boolean;
   };
   
   /** Polling intervals in minutes */

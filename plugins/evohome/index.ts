@@ -101,17 +101,17 @@ export class EvoHomePlugin implements Plugin {
   /** Current configuration loaded from database */
   private currentConfig: Config = {} as Config;
   
-  /** Service instances for business logic */
-  private authManager: AuthManager;
-  private v1Api: V1ApiClient;
-  private v2Api: V2ApiClient;
-  private zoneService: ZoneService;
-  private overrideService: OverrideService;
-  private scheduleService: ScheduleService;
-  private taskScheduler: TaskScheduler;
-  private statsTracker: StatsTracker;
-  private apiStatsTracker: ApiStatsTracker;
-  private deviceCache: DeviceCacheService;
+  /** Service instances for business logic - initialized in init() */
+  private authManager!: AuthManager;
+  private v1Api!: V1ApiClient | any;
+  private v2Api!: V2ApiClient | any;
+  private zoneService!: ZoneService;
+  private overrideService!: OverrideService;
+  private scheduleService!: ScheduleService;
+  private taskScheduler!: TaskScheduler;
+  private statsTracker!: StatsTracker;
+  private apiStatsTracker!: ApiStatsTracker;
+  private deviceCache!: DeviceCacheService;
   
   /** Result from the most recent check */
   private lastResult: CheckResult | null = null;
@@ -135,17 +135,50 @@ export class EvoHomePlugin implements Plugin {
 
   /**
    * Initializes the plugin instance
-   * Sets up service instances and Express router
+   * Sets up Express router
    * 
-   * Note: Services are initialized with empty config object.
-   * The config is loaded from database in init() and then reloadConfig() is called.
+   * Note: Services are created AFTER config is loaded in init() to ensure
+   * mock mode flag is properly detected.
    */
   constructor() {
-    // Initialize all services using ServiceInitializer
-    // Pass a getter function that always returns the current config
+    // Set up router (routes will be registered after services are initialized)
+    this.router = Router();
+  }
+
+  /**
+   * Initializes plugin on server startup
+   * 
+   * Registers config schema with centralized ConfigManager and loads plugin configuration.
+   * The core ConfigManager handles mock vs production mode transparently via MemoryAdapter or SQLiteAdapter.
+   * After loading config, creates services with appropriate API clients (mock or real).
+   * 
+   * @throws {Error} If initialization fails
+   */
+  async init(): Promise<void> {
+    await writeLog('Initializing EvoHome plugin...', 'evohome', 'INFO');
+    
+    // Get centralized ConfigManager
+    const configManager = getConfigManager();
+    
+    // Register plugin config schema
+    configManager.registerSchema<Config>('evohome', evohomeConfigSchema);
+    
+    // Load configuration
+    const config = await configManager.getConfig<Config>('evohome');
+    
+    if (config) {
+      this.currentConfig = config;
+      await writeLog(`Config loaded (username: ${config.credentials?.username})`, 'evohome', 'INFO');
+    } else {
+      await writeLog('No config found - plugin needs to be configured', 'evohome', 'WARNING');
+      // Set empty config with no mock mode
+      this.currentConfig = {} as Config;
+    }
+    
+    // NOW create services - after config is loaded so mockMode is detected
     const services = ServiceInitializer.createServices(() => this.currentConfig);
     
-    // Assign services to instance properties (excluding configManager - using centralized one)
+    // Assign services to instance properties
     this.authManager = services.authManager;
     this.v1Api = services.v1Api;
     this.v2Api = services.v2Api;
@@ -157,42 +190,18 @@ export class EvoHomePlugin implements Plugin {
     this.apiStatsTracker = services.apiStatsTracker;
     this.deviceCache = services.deviceCache;
     
-    // Set up router with route handlers
-    this.router = Router();
+    // Set up routes now that services are initialized
     this.setupRoutes();
-  }
-
-  /**
+    
+    // Reload config into services if we have one
+    if (config) {
+      await this.reloadConfig();
+    }
+  }  /**
    * Initializes plugin on server startup
    * 
-   * Registers config schema with centralized ConfigManager.
-   * Loads config and updates all services.
-   * Called once by plugin loader before routes are registered.
-   * 
-   * @throws {Error} If initialization fails
-   */
-  async init(): Promise<void> {
-    await writeLog('Initializing EvoHome plugin...', 'evohome', 'INFO');
-    
-    // Register config schema with centralized manager
-    const configManager = getConfigManager();
-    configManager.registerSchema<Config>('evohome', evohomeConfigSchema);
-    
-    // Check if plugin has configuration
-    const hasConfig = await configManager.hasConfig('evohome');
-    if (hasConfig) {
-      const config = await configManager.getConfig<Config>('evohome');
-      await writeLog(`Config loaded from database (username: ${config?.credentials?.username})`, 'evohome', 'INFO');
-      
-      // Load config into all services
-      if (config) {
-        await this.reloadConfig();
-      }
-    } else {
-      await writeLog('No config found - plugin needs to be configured', 'evohome', 'WARNING');
-    }
-  }
-
+   * Registers config schema with centralized ConfigManager and loads plugin configuration.
+   * The core ConfigManager handles mock vs production mode transparently via MemoryAdapter or SQLiteAdapter.
   /**
    * Returns navigation menu items for this plugin
    * 
@@ -256,12 +265,20 @@ export class EvoHomePlugin implements Plugin {
   private async attemptAuthentication(retryV1: boolean = true, retryV2: boolean = true): Promise<boolean> {
     await writeLog('Initializing authentication...', 'evohome', 'INFO');
     
+    // Load config from centralized ConfigManager
     const configManager = getConfigManager();
     const config = await configManager.getConfig<Config>('evohome');
     
     if (!config) {
       await writeLog('Plugin not configured - authentication skipped', 'evohome', 'WARNING');
       return false;
+    }
+    
+    // In mock mode, authentication is not needed (mock clients don't require it)
+    if (config.settings?.mockMode) {
+      await writeLog('🎭 Mock Mode - Authentication not required', 'evohome', 'INFO');
+      this.isAuthenticated = true;
+      return true;
     }
     
     let v1Success = !retryV1; // If not retrying V1, assume it's already successful
@@ -334,10 +351,12 @@ export class EvoHomePlugin implements Plugin {
    * Starts all polling operations
    * Should only be called after successful authentication
    * 
+   * In mock mode, uses mock API clients but runs full polling to test task scheduler.
+   * 
    * @private
    */
   private async startPollingOperations(): Promise<void> {
-    // Load config to get polling intervals
+    // Load config from centralized ConfigManager
     const configManager = getConfigManager();
     const config = await configManager.getConfig<Config>('evohome');
     
@@ -352,6 +371,11 @@ export class EvoHomePlugin implements Plugin {
       overrideReset: 5,
       scheduleRefresh: 30
     };
+    
+    // In mock mode, log that we're using mock data but still running full polling
+    if (config.settings?.mockMode) {
+      await writeLog('🎭 Mock Mode - Running full polling with mock data to test task scheduler', 'evohome', 'INFO');
+    }
     
     // Register tasks with the core scheduler
     this.taskScheduler.registerTask({
@@ -481,6 +505,7 @@ export class EvoHomePlugin implements Plugin {
     await writeLog('Reloading configuration into all services...', 'evohome', 'INFO');
     
     try {
+      // Load config from centralized ConfigManager
       const configManager = getConfigManager();
       const config = await configManager.getConfig<Config>('evohome');
       
@@ -512,6 +537,7 @@ export class EvoHomePlugin implements Plugin {
    */
   private async checkIfConfigured(): Promise<boolean> {
     try {
+      // Load config from centralized ConfigManager
       const configManager = getConfigManager();
       const config = await configManager.getConfig<Config>('evohome');
       return !!(config?.credentials?.username && config?.credentials?.password);
@@ -658,7 +684,6 @@ export class EvoHomePlugin implements Plugin {
       zoneService: this.zoneService,
       overrideService: this.overrideService,
       scheduleService: this.scheduleService,
-      // Note: configManager not passed - routes will use getConfigManager() directly
       authManager: this.authManager,
       v1Api: this.v1Api,
       v2Api: this.v2Api,
@@ -713,6 +738,7 @@ export class EvoHomePlugin implements Plugin {
         };
       },
       get zoneSchedules() { return self.zoneSchedules; },
+      get currentConfig() { return self.currentConfig; },
       performCheck: this.performCheck.bind(this),
       stop: this.stop.bind(this),
       start: this.start.bind(this),

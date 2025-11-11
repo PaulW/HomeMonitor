@@ -33,15 +33,14 @@ import { renderPluginTemplate } from '../../lib/template-renderer.js';
 
 /**
  * Services container for route handlers
- * Note: configManager removed - routes use getConfigManager() directly
  */
 export interface RouteServices {
   zoneService: ZoneService;
   overrideService: OverrideService;
   scheduleService: ScheduleService;
   authManager: AuthManager;
-  v1Api: V1ApiClient;
-  v2Api: V2ApiClient;
+  v1Api: V1ApiClient | any; // Can be MockV1ApiClient in mock mode
+  v2Api: V2ApiClient | any; // Can be MockV2ApiClient in mock mode
   deviceCache: DeviceCacheService;
 }
 
@@ -63,6 +62,8 @@ export interface PluginState {
   pollingStatus: any;
   /** Cached zone schedules */
   zoneSchedules: any[];
+  /** Current configuration */
+  currentConfig: any;
   /** Perform a zone check */
   performCheck: (manual: boolean) => Promise<any>;
   /** Stop the plugin */
@@ -171,6 +172,7 @@ export function setupRoutes(services: RouteServices, state: PluginState): Router
    * @route GET /api/config
    */
   router.get('/api/config', asyncHandler(async (req, res) => {
+    // Load config from centralized ConfigManager
     const configManager = getConfigManager();
     const config = await configManager.getConfig<Config>('evohome');
     sendSuccess(res, config || {});
@@ -194,6 +196,8 @@ export function setupRoutes(services: RouteServices, state: PluginState): Router
    */
   router.post('/api/config', asyncHandler(async (req, res) => {
     const config: Config = req.body;
+    
+    // Save config to centralized ConfigManager
     const configManager = getConfigManager();
     await configManager.saveConfig('evohome', config);
     
@@ -212,8 +216,10 @@ export function setupRoutes(services: RouteServices, state: PluginState): Router
   router.post('/api/settings', asyncHandler(async (req, res) => {
     validateRequiredFields(req.body, ['username', 'password', 'dhwSetTemp', 'boostTemp', 'zoneStatus', 'overrideReset', 'scheduleRefresh']);
     
+    // Load current config from centralized ConfigManager
     const configManager = getConfigManager();
     const currentConfig = await configManager.getConfig<Config>('evohome');
+      
     const updatedConfig: Config = {
       ...(currentConfig || {}),
       credentials: {
@@ -223,6 +229,7 @@ export function setupRoutes(services: RouteServices, state: PluginState): Router
       settings: {
         dhwSetTemp: parseFloatSafe(req.body.dhwSetTemp, 50, 40, 70),
         boostTemp: parseFloatSafe(req.body.boostTemp, 1.5, 0.5, 3.0),
+        mockMode: currentConfig?.settings?.mockMode, // Preserve mock mode flag
       },
       polling: {
         zoneStatus: parseIntSafe(req.body.zoneStatus, 5, 1, 5),
@@ -232,6 +239,7 @@ export function setupRoutes(services: RouteServices, state: PluginState): Router
       overrideRules: currentConfig?.overrideRules || [],
     };
     
+    // Save config to centralized ConfigManager
     await configManager.saveConfig('evohome', updatedConfig);
 
     // Reload configuration into all services
@@ -311,7 +319,7 @@ export function setupRoutes(services: RouteServices, state: PluginState): Router
 
   /**
    * POST /api/boost/zone
-   * Boosts a temperature zone by increasing setpoint by configured boost amount for 1 hour
+   * Boosts a zone's temperature by the configured boost amount for 1 hour
    * 
    * @route POST /api/boost/zone
    */
@@ -320,8 +328,11 @@ export function setupRoutes(services: RouteServices, state: PluginState): Router
     
     const deviceId = parseIntSafe(req.body.deviceId, 0);
     const currentTemp = parseFloatSafe(req.body.currentTemp, 20.0);
+    
+    // Load config from centralized ConfigManager
     const configManager = getConfigManager();
     const config = await configManager.getConfig<Config>('evohome');
+      
     const boostTemp = currentTemp + (config?.settings.boostTemp || 1.5);
     
     await services.v2Api.setZoneTemperatureOverrideWithRetry(deviceId, boostTemp, 60);

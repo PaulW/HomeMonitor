@@ -202,22 +202,39 @@ async function startServer() {
     await rotateLogs(7);
     await writeLog('Server starting...', 'server', 'INFO');
 
+    // Check if mock mode is enabled
+    const isMockMode = process.env.HM_MOCK_MODE === 'true';
+    
+    if (isMockMode) {
+      await writeLog('🎭 HM_MOCK_MODE enabled - Using in-memory storage (no database)', 'server', 'INFO');
+    }
+
+    // Load mock data dynamically from plugins if in mock mode
+    let mockData: Record<string, any> | undefined;
+    if (isMockMode) {
+      mockData = await pluginLoader.loadMockData();
+      await writeLog(`🎭 Loaded mock data for ${Object.keys(mockData).length} plugin(s)`, 'server', 'INFO');
+    }
+
     // Initialize centralized configuration manager
-    // Initialize ConfigManager at startup
     const configManager = getConfigManager({
       database: {
         type: 'sqlite',
         path: join(__dirname, 'data', 'home-monitor.db'),
       },
       enableCache: true,
+      mockMode: isMockMode,
+      mockData,
+      verbose: isMockMode,
     });
 
-    if (!process.env.HM_MASTER_KEY) {
+    if (!process.env.HM_MASTER_KEY && !isMockMode) {
       await writeLog('WARNING: HM_MASTER_KEY not set. Using default key (INSECURE!)', 'server', 'WARNING');
       await writeLog('Please set HM_MASTER_KEY environment variable for production', 'server', 'WARNING');
     }
 
     try {
+      // Initialize ConfigManager (mock or production)
       await configManager.initialize(process.env.HM_MASTER_KEY);
       await writeLog('ConfigManager initialized successfully', 'server', 'INFO');
     } catch (error) {

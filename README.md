@@ -64,6 +64,9 @@ HM_MASTER_KEY=your-generated-secure-key-here
 
 # Optional: Server port (default: 8080)
 PORT=8080
+
+# Optional: Enable mock mode for testing without real API calls or database
+HM_MOCK_MODE=false
 ```
 
 **Important**: 
@@ -87,7 +90,20 @@ The landing page will show all installed plugins with quick access to their feat
 ```
 home-monitor/
 ├── server.ts                          # Main Express server with plugin system
+├── .env.example                       # Environment variables template
 ├── lib/
+│   ├── config/                        # Configuration management system
+│   │   ├── config-manager.ts          # Main config manager
+│   │   ├── encryption.ts              # AES-256-GCM encryption
+│   │   ├── schema.ts                  # Database schema (Drizzle ORM)
+│   │   ├── types.ts                   # TypeScript types
+│   │   ├── index.ts                   # Public exports
+│   │   ├── test-config.ts             # Integration tests
+│   │   ├── adapters/
+│   │   │   ├── base-adapter.ts        # Abstract adapter interface
+│   │   │   ├── sqlite-adapter.ts      # SQLite implementation (production)
+│   │   │   └── memory-adapter.ts      # In-memory implementation (mock mode)
+│   │   └── migrations/                # Database migrations
 │   ├── logger.ts                      # Global centralized logging
 │   ├── plugin-interface.ts            # Plugin contract/interface
 │   ├── plugin-loader.ts               # Auto-discovery and lifecycle management
@@ -101,22 +117,28 @@ home-monitor/
 │   └── evohome/
 │       ├── index.ts                   # Plugin entry point
 │       ├── routes.ts                  # Express routes
-│       ├── config.ts                  # Configuration management
 │       ├── config-schema.ts           # JSON schema for validation
-│       ├── config.json                # Plugin configuration
+│       ├── centralized-config-schema.ts # Schema for centralized config
+│       ├── README.md                  # Plugin documentation
 │       ├── api/                       # API clients
 │       │   ├── auth-manager.ts        # Authentication handling
 │       │   ├── v1-api.ts              # EvoHome V1 API client
-│       │   └── v2-api.ts              # EvoHome V2 API client
+│       │   ├── v2-api.ts              # EvoHome V2 API client
+│       │   ├── mock-api-client.ts     # Mock V2 API client (mock mode)
+│       │   ├── mock-v1-api-client.ts  # Mock V1 API client (mock mode)
+│       │   ├── mock-data.ts           # Mock data generator
+│       │   └── constants.ts           # API constants
 │       ├── services/                  # Business logic
 │       │   ├── device-cache-service.ts
 │       │   ├── override-service.ts
 │       │   ├── schedule-service.ts
-│       │   └── zone-service.ts
+│       │   ├── zone-service.ts
+│       │   └── api-stats-tracker.ts
 │       ├── types/                     # TypeScript interfaces
 │       │   ├── api.types.ts
 │       │   ├── config.types.ts
-│       │   └── schedule.types.ts
+│       │   ├── schedule.types.ts
+│       │   └── zone.types.ts
 │       ├── utils/                     # Plugin-specific utilities
 │       │   ├── logger.ts
 │       │   ├── http.ts
@@ -143,15 +165,22 @@ home-monitor/
 │   ├── js/                            # Core JavaScript utilities
 │   │   ├── utils.js                   # Time, messages, API fetch, validation
 │   │   ├── template-helpers.js        # Template loading and caching
+│   │   ├── dom-differ.js              # DOM diffing utility
 │   │   ├── scripts.js                 # Sidebar toggle
 │   │   └── logs.js                    # Activity logs viewer
 │   └── templates/                     # Core HTML templates
 │       ├── layout.html                # Main layout with navigation
 │       ├── home.html                  # Landing page
 │       └── logs.html                  # Global activity logs
+├── data/
+│   └── home-monitor.db                # SQLite database (gitignored)
 ├── logs/
 │   └── home-monitor-YYYY-MM-DD.log    # Daily log files (7-day rotation)
 ├── docs/                              # Refactoring and architecture docs
+│   ├── archive/                       # Historical/superseded documentation
+│   ├── CONFIG_QUICKSTART.md           # Configuration system guide
+│   ├── MOCK_MODE_USAGE.md             # Mock mode documentation
+│   └── ... (other documentation)
 ├── package.json                       # Dependencies
 ├── tsconfig.json                      # TypeScript configuration
 └── README.md                          # This file

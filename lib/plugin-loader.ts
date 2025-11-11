@@ -165,4 +165,65 @@ export class PluginLoader {
       }
     }
   }
+
+  /**
+   * Dynamically loads mock data from all plugins
+   * 
+   * Scans each plugin directory for a mock data generator function.
+   * Conventions checked (in order):
+   * 1. api/mock-data.js exports generateMockConfig()
+   * 2. mock-data.js exports generateMockConfig()
+   * 
+   * This is used for HM_MOCK_MODE to pre-populate the MemoryAdapter
+   * with realistic plugin configurations without requiring manual setup.
+   * 
+   * @returns Record mapping plugin IDs to their mock configurations
+   * 
+   * @example
+   * ```typescript
+   * const mockData = await pluginLoader.loadMockData();
+   * // { evohome: {...}, tempmonitor: {...} }
+   * ```
+   */
+  async loadMockData(): Promise<Record<string, any>> {
+    const mockData: Record<string, any> = {};
+
+    try {
+      const pluginDirs = readdirSync(this.pluginsDir, { withFileTypes: true })
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name);
+
+      for (const pluginDir of pluginDirs) {
+        try {
+          // Try standard locations for mock data generator
+          const possiblePaths = [
+            join(this.pluginsDir, pluginDir, 'api', 'mock-data.js'),
+            join(this.pluginsDir, pluginDir, 'mock-data.js'),
+          ];
+
+          let mockDataModule = null;
+          for (const path of possiblePaths) {
+            try {
+              mockDataModule = await import(path);
+              break;
+            } catch {
+              // Try next path
+            }
+          }
+
+          if (mockDataModule && typeof mockDataModule.generateMockConfig === 'function') {
+            mockData[pluginDir] = mockDataModule.generateMockConfig();
+            await writeLog(`Loaded mock data for plugin: ${pluginDir}`, 'server', 'INFO');
+          }
+        } catch (error) {
+          // Plugin doesn't have mock data - that's okay
+          await writeLog(`No mock data found for plugin ${pluginDir} (optional)`, 'server', 'DEBUG');
+        }
+      }
+    } catch (error) {
+      await writeLog(`Failed to load mock data: ${error}`, 'server', 'ERROR');
+    }
+
+    return mockData;
+  }
 }
