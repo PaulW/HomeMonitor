@@ -19,6 +19,7 @@ export { EncryptionService, getEncryptionService } from './encryption.js';
 // Database adapters
 export { BaseAdapter } from './adapters/base-adapter.js';
 export { SQLiteAdapter } from './adapters/sqlite-adapter.js';
+export { MemoryAdapter } from './adapters/memory-adapter.js';
 
 // Schema
 export * from './schema.js';
