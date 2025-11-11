@@ -1,0 +1,157 @@
+/**
+ * Logs Page Styles
+ * Styling for the system activity logs viewer with filtering
+ */
+
+.logs-container {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
+
+.logs-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.filter-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-group strong {
+  color: #1f2937;
+  font-size: 14px;
+  min-width: 80px;
+}
+
+#source-filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.logs-filter label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.logs-filter input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.logs-display {
+  background: #1f2937;
+  border-radius: 8px;
+  padding: 16px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.logs-display pre {
+  margin: 0;
+  color: #10b981;
+  font-size: 13px;
+  line-height: 1.8;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+}
+
+.log-entry {
+  margin: 4px 0;
+}
+
+.log-timestamp {
+  color: #9ca3af;
+}
+
+.log-source {
+  color: #8b5cf6;
+  font-weight: 600;
+}
+
+.log-info {
+  color: #60a5fa;
+}
+
+.log-debug {
+  color: #10b981;
+}
+
+.log-warning {
+  color: #fbbf24;
+}
+
+.log-error {
+  color: #ef4444;
+}
+
+/* ============================================================================
+   Mobile Responsive Styles
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .logs-container {
+    padding: 16px;
+  }
+
+  .logs-filter {
+    gap: 12px;
+  }
+
+  .filter-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-group strong {
+    min-width: auto;
+  }
+
+  .logs-display {
+    max-height: 400px;
+  }
+
+  .logs-display pre {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 480px) {
+  .logs-container {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .logs-filter label {
+    font-size: 13px;
+  }
+
+  .logs-filter input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+  }
+
+  .logs-display {
+    padding: 12px;
+    max-height: 300px;
+  }
+
+  .logs-display pre {
+    font-size: 11px;
+  }
+}

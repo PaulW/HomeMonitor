@@ -606,3 +606,301 @@ select {
   color: #6b7280;
 }
 
+/* ============================================================================
+   Mobile Menu Toggle
+   ============================================================================ */
+
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1001;
+  width: 44px;
+  height: 44px;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mobile-menu-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #667eea;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+/* ============================================================================
+   Responsive Media Queries
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 80px 16px 20px;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .header {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+    max-height: 90vh;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  .sidebar {
+    width: 280px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card .value {
+    font-size: 28px;
+  }
+
+  .status-bar {
+    flex-wrap: wrap;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .legend {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Make tables horizontally scrollable on mobile */
+  .devices-table {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 600px;
+  }
+
+  /* Toast notifications - smaller on mobile */
+  .toast-container {
+    top: 80px;
+    right: 12px;
+    left: 12px;
+    max-width: none;
+  }
+
+  .toast {
+    padding: 12px 16px;
+  }
+
+  /* Modal adjustments */
+  .modal-content {
+    padding: 16px;
+  }
+
+  .modal h2 {
+    font-size: 20px;
+  }
+
+  .room-config {
+    padding: 12px;
+  }
+
+  .checkbox-group {
+    flex-direction: column;
+  }
+
+  /* Timeline adjustments */
+  .timeline-zone-name {
+    width: 120px;
+    font-size: 13px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 70px 12px 12px;
+  }
+
+  .header {
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .card .value {
+    font-size: 24px;
+  }
+
+  button {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  /* Sidebar adjustments for small phones */
+  .sidebar {
+    width: 260px;
+  }
+
+  .sidebar-header h1 {
+    font-size: 20px;
+  }
+
+  .nav-item {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  /* Smaller status badges */
+  .status-badge {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  /* Timeline - stack on very small screens */
+  .timeline-zone-name {
+    width: 80px;
+    font-size: 11px;
+    padding: 6px;
+  }
+}
+
+/* ============================================================================
+   Touch-friendly improvements
+   ============================================================================ */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Increase touch targets on touch devices */
+  .nav-item,
+  button,
+  .btn,
+  .room-action-btn {
+    min-height: 44px;
+  }
+
+  .checkbox-group label {
+    min-height: 44px;
+    padding: 8px;
+  }
+
+  /* Remove hover effects on touch devices */
+  .nav-item:hover {
+    background: transparent;
+  }
+
+  .nav-item.active {
+    background: #ede9fe;
+  }
+}
+
+/* ============================================================================
+   Enhanced Device Detection (Optional)
+   These selectors use data attributes set by JavaScript for additional control
+   ============================================================================ */
+
+/* Touch device optimizations - disable hover effects on confirmed touch devices */
+html[data-touch-device="true"] .nav-item:hover,
+html[data-touch-device="true"] button:hover,
+html[data-touch-device="true"] .card:hover {
+  transform: none;
+  box-shadow: inherit;
+}
+
+/* Small mobile specific optimizations */
+html[data-device-type="mobile-small"] .sidebar {
+  width: 240px; /* Slightly narrower on very small phones */
+}
+
+/* Desktop touch (Surface, touch laptops) - keep desktop layout but touch-friendly */
+html[data-device-type="desktop-touch"] .nav-item,
+html[data-device-type="desktop-touch"] button {
+  min-height: 40px; /* Slightly larger touch targets even in desktop view */
+}
+
