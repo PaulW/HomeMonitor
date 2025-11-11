@@ -49,16 +49,24 @@ class SidebarNav {
    */
   restoreSectionStates() {
     document.querySelectorAll('.nav-section').forEach(section => {
-      const sectionName = section.querySelector('.nav-section-title span:last-child').textContent;
+      const sectionNameElement = section.querySelector('.nav-section-title span:last-child');
       const items = section.querySelector('.nav-section-items');
       const toggle = section.querySelector('.section-toggle');
+      
+      // Skip if required elements are missing
+      if (!sectionNameElement || !items || !toggle) {
+        console.warn('Skipping section with missing elements:', section);
+        return;
+      }
+      
+      const sectionName = sectionNameElement.textContent;
       
       // If this section contains the active page, always expand it
       if (section === this.activeSection) {
         this.expandSection(items, toggle, sectionName);
       } else {
         // Otherwise restore from localStorage
-        const isCollapsed = localStorage.getItem(`section-${sectionName}`) === 'collapsed';
+        const isCollapsed = this.getStorageItem(`section-${sectionName}`) === 'collapsed';
         
         if (!isCollapsed) {
           this.expandSection(items, toggle, sectionName);
@@ -77,7 +85,7 @@ class SidebarNav {
   expandSection(items, toggle, sectionName) {
     items.classList.remove('collapsed');
     toggle.textContent = '▼';
-    localStorage.setItem(`section-${sectionName}`, 'expanded');
+    this.setStorageItem(`section-${sectionName}`, 'expanded');
   }
 
   /**
@@ -90,7 +98,7 @@ class SidebarNav {
   collapseSection(items, toggle, sectionName) {
     items.classList.add('collapsed');
     toggle.textContent = '▶';
-    localStorage.setItem(`section-${sectionName}`, 'collapsed');
+    this.setStorageItem(`section-${sectionName}`, 'collapsed');
   }
 
   /**
@@ -102,12 +110,48 @@ class SidebarNav {
   toggleSection(element) {
     const items = element.nextElementSibling;
     const toggle = element.querySelector('.section-toggle');
-    const sectionName = element.querySelector('span:last-child').textContent;
+    const sectionNameElement = element.querySelector('span:last-child');
+    
+    if (!items || !toggle || !sectionNameElement) {
+      console.error('Invalid section structure for toggle:', element);
+      return;
+    }
+    
+    const sectionName = sectionNameElement.textContent;
     
     if (items.classList.contains('collapsed')) {
       this.expandSection(items, toggle, sectionName);
     } else {
       this.collapseSection(items, toggle, sectionName);
+    }
+  }
+
+  /**
+   * Safe localStorage getter with error handling
+   * 
+   * @param {string} key - The localStorage key
+   * @returns {string|null} The stored value or null if error/not found
+   */
+  getStorageItem(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      console.warn('Failed to read from localStorage:', e);
+      return null;
+    }
+  }
+
+  /**
+   * Safe localStorage setter with error handling
+   * 
+   * @param {string} key - The localStorage key
+   * @param {string} value - The value to store
+   */
+  setStorageItem(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      console.warn('Failed to save to localStorage:', e);
     }
   }
 
